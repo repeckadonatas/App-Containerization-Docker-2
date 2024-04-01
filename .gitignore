@@ -1,0 +1,12 @@
+.idea
+.venv
+.env
+logs/*.log
+source/api_key/api_key.txt
+Source/logger/__pycache__
+Source/db_functions/__pycache__
+Source/db_con_config/__pycache__
+Source/data_preparation/__pycache__/
+Source/get_weather_data/__pycache__/
+Source/data_preparation/.ipynb_checkpoints
+Source/data_preparation/*.ipynb

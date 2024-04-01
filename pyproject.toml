@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "precious-metals-price-prediction"
+version = "0.1.0"
+description = "A project to retrieve the prices of precious metals at an hourly rate and use that data in testing of machine learning model to predict the future prices."
+authors = ["repeckadonatas <repeckadonatas@yahoo.comm>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ["3.11", "3.11.4"]
+numpy = "1.26.4"
+pandas = "2.2.1"
+sktime = "0.28.0"
+SQLAlchemy = "2.0.29"
+psycopg = {extras = ["binary"], version = "3.1.18"}
+python-dotenv = "1.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
