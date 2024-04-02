@@ -2,7 +2,6 @@
 .venv
 .env
 logs/*
-source/api_key/api_key.txt
 source/logger/__pycache__
 source/db_functions/__pycache__
 source/db_con_config/__pycache__
@@ -11,6 +10,6 @@ source/get_weather_data/__pycache__/
 source/data_preparation/.ipynb_checkpoints
 source/data_preparation/*.ipynb
 source/data/*
-source/api_key
+source/api_key/*
 source/__pycache__
 source/get_metals_data/__pycache__

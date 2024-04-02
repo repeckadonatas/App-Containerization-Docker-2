@@ -4,7 +4,7 @@ from pathlib import Path
 
 
 PATH_TO_DATA_STORAGE = Path(__file__).cwd() / 'source/data/'
-PATH_TO_API = Path(__file__).cwd() / 'source/api_key.txt'
+PATH_TO_API = Path(__file__).cwd() / 'source/api_key/api_key.txt'
 PATH_TO_METALS_LIST = Path(__file__).cwd() / 'source/metals.txt'
 
 
