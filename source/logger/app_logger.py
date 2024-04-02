@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-#-*- coding: utf-8 -*-
-
 import sys
 import logging
 from pathlib import Path
@@ -8,9 +5,9 @@ from logging.handlers import RotatingFileHandler
 from datetime import datetime
 
 
-formatter = logging.Formatter('%(asctime)s :: %(name)s :: %(levelname)s :: %(funcName)s :: %(message)s')
-path_to_logs = Path(__file__).cwd()
-log_file = path_to_logs / 'logs/' / ("app_logger_" + datetime.today().strftime("%Y%m%d") + ".log")
+FORMATTER = logging.Formatter('%(asctime)s :: %(name)s :: %(levelname)s :: %(funcName)s :: %(message)s')
+PATH_TO_LOGS = Path(__file__).cwd()
+LOG_FILE = PATH_TO_LOGS / 'logs/' / ("app_logger_" + datetime.today().strftime("%Y%m%d") + ".log")
 
 
 def get_console_handler():
@@ -22,7 +19,7 @@ def get_console_handler():
     """
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setLevel(logging.INFO)  # level=20
-    console_handler.setFormatter(formatter)
+    console_handler.setFormatter(FORMATTER)
     return console_handler
 
 
@@ -31,8 +28,8 @@ def get_file_handler():
     Creates a file handler object that stores log outputs.
     :return: returns .logs file
     """
-    file_handler = RotatingFileHandler(log_file)
-    file_handler.setFormatter(formatter)
+    file_handler = RotatingFileHandler(LOG_FILE)
+    file_handler.setFormatter(FORMATTER)
     return file_handler
 
 
