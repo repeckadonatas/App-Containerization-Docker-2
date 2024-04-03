@@ -2,36 +2,34 @@ import os
 import json
 import pytz
 import pandas as pd
-from pathlib import Path
+
+from source.constants import *
 
 
-def get_files_in_directory():
+def get_files_in_directory() -> list:
     """
     Reads JSON files in a set directory.
     Returns a list of names of files in the directory
     to be iterated through.
-    :return a list of file names in the directory
+    :return: a list of file names in the directory
     """
-    path_to_files = Path(__file__).cwd() / 'Source/data/input/'
-    files_in_path = os.scandir(path_to_files)
+    files = os.scandir(PATH_TO_DATA_STORAGE)
 
     list_of_files = []
-    for file in files_in_path:
+    for file in files:
         if file.is_dir() or file.is_file():
-            list_of_files.append(file.name)
+            list_of_files.append(file.name)   
     return list_of_files
 
 
-def create_dataframe(file_json):
+def create_dataframe(file_json: str) -> pd.DataFrame:
     """
     Creates a pandas dataframe from a JSON file.
     Requires a name of the file.
     """
-    path_to_files = Path(__file__).cwd() / 'Source/data/input/'
-    with open(path_to_files / file_json) as jfile:
+    with open(PATH_TO_DATA_STORAGE / file_json) as jfile:
         json_data = json.load(jfile)
         df = pd.DataFrame(pd.json_normalize(json_data))
-
     return df
 
 
@@ -40,7 +38,7 @@ def flatten_json_file(dataframe: pd.DataFrame, col: str) -> pd.DataFrame:
     Flattens the supplied dataframe and returns a new dataframe.
     :param col: a name of the column to be flattened
     :param dataframe: dataframe to flatten
-    :return: new dataframe with flattened json data
+    :return: new dataframe with flattened JSON data
     """
     dataframe_flat = dataframe[col].apply(pd.Series)
     dataframe_flat_0 = dataframe_flat[0].apply(pd.Series)
@@ -76,6 +74,7 @@ def change_column_names(dataframe: pd.DataFrame) -> pd.DataFrame:
                  "sys.sunrise": "sunrise_local",
                  "sys.sunset": "sunset_local"}
     dataframe.rename(columns=new_names, inplace=True)
+    dataframe.reindex(columns=new_names)
     return dataframe
 
 
@@ -112,3 +111,7 @@ def reorder_dataframe_columns(dataframe: pd.DataFrame) -> pd.DataFrame:
 
     dataframe = dataframe.reindex(columns=reordered_columns)
     return dataframe
+
+
+def prepare_json_data():
+    
