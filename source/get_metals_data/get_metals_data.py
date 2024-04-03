@@ -48,7 +48,7 @@ def download_metals_data():
         metals = read_metals_list()
         
         get_metal_price_data(metals, api_key)
-        api_logger.info('Data downloaded successfully!')
+        api_logger.info('Data downloaded successfully!\n')
     
     except (Exception, RequestException) as e:
         api_logger.info('An exception occured: {}'.format(e))

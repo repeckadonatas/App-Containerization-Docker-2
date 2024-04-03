@@ -1,9 +1,11 @@
 import os
 import json
-import pytz
 import pandas as pd
 
+import source.logger as log
 from source.constants import *
+
+data_logger = log.app_logger(__name__)
 
 
 def get_files_in_directory() -> list:
@@ -33,85 +35,43 @@ def create_dataframe(file_json: str) -> pd.DataFrame:
     return df
 
 
-def flatten_json_file(dataframe: pd.DataFrame, col: str) -> pd.DataFrame:
-    """
-    Flattens the supplied dataframe and returns a new dataframe.
-    :param col: a name of the column to be flattened
-    :param dataframe: dataframe to flatten
-    :return: new dataframe with flattened JSON data
-    """
-    dataframe_flat = dataframe[col].apply(pd.Series)
-    dataframe_flat_0 = dataframe_flat[0].apply(pd.Series)
-    dataframe_flat_0.columns = ['weather_id', 'weather_main', 'weather_description', 'weather_icon']
-    dataframe_new = pd.concat([dataframe, dataframe_flat_0], axis=1)
-    dataframe_new = dataframe_new.drop(columns=[col], axis=1)
-    return dataframe_new
-
-
 def change_column_names(dataframe: pd.DataFrame) -> pd.DataFrame:
     """
     Changes the column names of the dataframe to their new column names.
     :param dataframe: a pandas dataframe to change column names
     :return: dataframe with new column names
     """
-    new_names = {"dt": "date_local",
-                 "name": "city",
-                 "id": "country_id",
-                 "coord.lon": "longitude",
-                 "coord.lat": "latitude",
-                 "main.temp": "main_temp",
-                 "main.feels_like": "main_feels_like",
-                 "main.temp_min": "main_temp_min",
-                 "main.temp_max": "main_temp_max",
-                 "main.pressure": "pressure",
-                 "main.humidity": "humidity",
-                 "wind.speed": "wind_speed",
-                 "wind.deg": "wind_deg",
-                 "clouds.all": "clouds",
-                 "sys.type": "sys_type",
-                 "sys.id": "sys_id",
-                 "sys.country": "country",
-                 "sys.sunrise": "sunrise_local",
-                 "sys.sunset": "sunset_local"}
+    new_names = {"rate.price": "rate_price",
+                 "rate.ask": "rate_ask",
+                 "rate.bid": "rate_bid", 
+                 "rate.high": "rate_high",
+                 "rate.low": "rate_low",
+                 "rate.change": "rate_change",
+                 "rate.change_percent": "rate_change_percent"}
     dataframe.rename(columns=new_names, inplace=True)
     dataframe.reindex(columns=new_names)
     return dataframe
 
 
-def change_datetime_format(dataframe: pd.DataFrame) -> pd.DataFrame:
+def prepare_json_data(queue, event):
     """
-    Change datetime format of a given dataframe to ISO 8601 format.
-    Datetime returned is adjusted for 'Europe/Vilnius' time zone.
-    :param dataframe: dataframe to change datetime format for.
-    :return: dataframe with changed datetime format.
+    Setting up the sequence in which
+    to execute data preparation functions.
+    The JSON files are turned into pandas DataFrame's
+    and put into a queue.
     """
-    date_cols = ['date_local', 'sunrise_local', 'sunset_local']
-    local_timezone = pytz.timezone('Europe/Vilnius')
-    dataframe['date_vilnius'] = (pd.to_datetime(dataframe['date_local'], unit='s', errors='coerce', utc=True)
-                                 .dt.tz_convert(local_timezone))
-
-    for i in date_cols:
-        dataframe[i] = dataframe[i] + dataframe['timezone']
-        dataframe[i] = pd.to_datetime(dataframe[i], unit='s', errors='coerce')
-
-    return dataframe
-
-
-def reorder_dataframe_columns(dataframe: pd.DataFrame) -> pd.DataFrame:
-    """
-    Reorders the columns of a dataframe.
-    :param dataframe: dataframe to reorder columns for
-    :return: dataframe with reordered columns
-    """
-    reordered_columns = ['longitude', 'latitude', 'country_id', 'country', 'city', 'main_temp', 'main_feels_like',
-                         'main_temp_min', 'main_temp_max', 'date_vilnius', 'date_local', 'timezone', 'sunrise_local',
-                         'sunset_local', 'weather_id', 'weather_main', 'weather_description', 'weather_icon',
-                         'pressure', 'humidity', 'wind_speed', 'wind_deg', 'clouds', 'visibility', 'base',
-                         'sys_type', 'sys_id', 'cod']
-
-    dataframe = dataframe.reindex(columns=reordered_columns)
-    return dataframe
-
-
-def prepare_json_data():
-    
+    while not event.is_set():
+        try:
+            json_files = get_files_in_directory()
+            data_logger.info('Files found in a directory: {}'.format(json_files))
+            
+            for json_file in json_files:
+                json_to_df = create_dataframe(json_file)
+                new_col_names = change_column_names(json_to_df)
+                data_logger.info('A dataframe was created for a file: {}'.format(json_file))
+                queue.put(new_col_names)
+            print()
+            event.set()
+        except Exception as e:
+            data_logger.error("An error occurred while creating a dataframe: {}\n".format(e))
+        

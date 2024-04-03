@@ -1,9 +1,10 @@
 import source.logger as log
 import source.get_metals_data as metals
-# import source.data_preparation as data
+import source.data_preparation as data
 # import source.db_functions as db
 
 import concurrent.futures
+from concurrent.futures.
 import threading
 import time
 from queue import Queue
@@ -23,7 +24,8 @@ event = threading.Event()
 queue = Queue(maxsize=4)
 try:
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
-        tasks = executor.map(metals.download_metals_data())
+        tasks = [executor.map(metals.download_metals_data()),
+                 executor.submit(data.prepare_json_data(queue, event))]
         # tasks = [executor.submit(data.kaggle_dataset_preparation(queue, event)),
         #          executor.submit(db.kaggle_dataset_upload_to_db(queue, event))]
 
