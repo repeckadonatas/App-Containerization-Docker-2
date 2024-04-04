@@ -20,7 +20,7 @@ def get_files_in_directory() -> list:
     list_of_files = []
     for file in files:
         if file.is_dir() or file.is_file():
-            list_of_files.append(file.name)   
+            list_of_files.append(file.name)
     return list_of_files
 
 
@@ -49,7 +49,6 @@ def change_column_names(dataframe: pd.DataFrame) -> pd.DataFrame:
                  "rate.change": "rate_change",
                  "rate.change_percent": "rate_change_percent"}
     dataframe.rename(columns=new_names, inplace=True)
-    dataframe.reindex(columns=new_names)
     return dataframe
 
 
@@ -69,7 +68,7 @@ def prepare_json_data(queue, event):
                 json_to_df = create_dataframe(json_file)
                 new_col_names = change_column_names(json_to_df)
                 data_logger.info('A dataframe was created for a file: {}'.format(json_file))
-                queue.put(new_col_names)
+                queue.put([new_col_names, json_file])
             print()
             event.set()
         except Exception as e:
