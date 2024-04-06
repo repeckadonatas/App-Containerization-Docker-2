@@ -1,6 +1,6 @@
 import pandas as pd
 from sqlalchemy.engine import URL
-from sqlalchemy import create_engine, Table, Column, String, Integer, Float, MetaData
+from sqlalchemy import create_engine, Table, Column, String, Integer, Float, TIMESTAMP ,MetaData
 
 import source.logger as log
 from source.constants import *
@@ -18,7 +18,7 @@ class MetalsPriceDataDatabase:
 
     def __init__(self):
         """
-        Retrieves parsed config parameters from .env1 file.
+        Retrieves parsed config parameters from .env file.
         Creates database URL using parsed configuration variables.
         """
         try:
@@ -65,47 +65,31 @@ class MetalsPriceDataDatabase:
         except (Exception, AttributeError, exc_type, exc_val, exc_tb) as err:
             db_logger.error("Connection was not closed: %s", err)
 
-    def create_tables(self):
+    def create_tables(self) -> (str | None):
         """
         Creates tables in a database if they do not exist.
         Returns a list of tables in a database.
         """
         try:
             self.metadata = MetaData()
-            self.loan_test_table = Table(
-                'loan_test',
-                self.metadata,
-                Column('loan_id', String(10)),
-                Column('gender', String(10)),
-                Column('married', String(5)),
-                Column('dependents', Integer()),
-                Column('education', String(15)),
-                Column('self_employed', String(5)),
-                Column('applicant_income', Integer()),
-                Column('coapplicant_income', Integer()),
-                Column('loan_amount', Float()),
-                Column('loan_amount_term', Float()),
-                Column('credit_history', Float()),
-                Column('property_area', String(10))
-            )
 
-            self.loan_train_table = Table(
-                'loan_train',
-                self.metadata,
-                Column('loan_id', String(10)),
-                Column('gender', String(10)),
-                Column('married', String(5)),
-                Column('dependents', Integer()),
-                Column('education', String(15)),
-                Column('self_employed', String(5)),
-                Column('applicant_income', Integer()),
-                Column('coapplicant_income', Integer()),
-                Column('loan_amount', Float()),
-                Column('loan_amount_term', Float()),
-                Column('credit_history', Float()),
-                Column('property_area', String(10)),
-                Column('loan_status', String(2))
-            )
+            for table in TABLES_TO_CREATE:
+                self.loan_test_table = Table(
+                    f'{table}',
+                    self.metadata,
+                    Column('status', String(20)),
+                    Column('timestamp', TIMESTAMP()),
+                    Column('currency', String(5)),
+                    Column('unit', String(5)),
+                    Column('metal', String(20)),
+                    Column('rate_price', Float()),
+                    Column('rate_ask', Float()),
+                    Column('rate_bid', Float()),
+                    Column('rate_high', Float()),
+                    Column('rate_low', Float()),
+                    Column('rate_change', Float()),
+                    Column('rate_change_percent', Float())
+                )
 
             for table, metadata in self.metadata.tables.items():
                 if self.engine.dialect.has_table(self.conn, table):
@@ -119,54 +103,67 @@ class MetalsPriceDataDatabase:
             db_logger.error("An error occurred while creating a table: {}".format(e))
             self.conn.rollback()
 
-    def get_tables_in_db(self):
+    def get_tables_in_db(self) -> None:
         """
         Returns a list of all the tables in the database.
         """
         table_list = []
-        for table in self.metadata.tables.items():
+        for table, metadata in self.metadata.tables.items():
             if self.engine.dialect.has_table(self.conn, table):
                 table_list.append(table)
         db_logger.info('Table(s) found in a database: {}'.format(table_list))
 
         return table_list
 
-    def load_to_database(self, dataframe: pd.DataFrame, table_name: str):
+    def load_to_database(self, dataframe: pd.DataFrame, table_name: str) -> None:
         """
         Function to load the data of a dataframe to a specified table in the database.
         :param dataframe: dataframe to load data from.
         :param table_name: table to load the data to.
         """
         try:
-            dataframe.to_sql(table_name, con=self.engine, if_exists='replace', index=False)
+            dataframe.to_sql(table_name, con=self.engine, if_exists='append', index=False)
         except Exception as e:
             db_logger.error("An error occurred while loading the data: {}. Rolling back the last transaction".format(e))
             self.conn.rollback()
+            
+    def determine_table_name(self, file_name: str) -> (str | None):
+        """
+        To determine the table name based on the file name.
+        """
+        for prefix, table in TABLE_MAPPING.items():
+            if prefix in file_name:
+                return table
+        return db_logger.error('Table "{}" not found in the database'.format(table))
 
 
-def metals_price_dataset_upload_to_db(queue, event):
+def metals_price_data_upload_to_db(queue, event) -> None:
     """
     Setting up the sequence in which
     to execute data upload to database.
-    The pandas DataFrame's of the CSV files
+    The pandas DataFrame's of the JSON files
     are taken from a queue.
-    The dataframe is then loaded into a corresponding
-    table in the database.
+    The dataframe is then loaded into a 
+    dedicated table in the database.
     """
     with MetalsPriceDataDatabase() as db:
         try:
             db.create_tables()
-
             db_tables = db.get_tables_in_db()
+            
             while not event.is_set() or not queue.empty():
-                for table in db_tables:
-                    dataframe, file_name = queue.get()
-                    if file_name == 'loan_test.csv':
-                        db.load_to_database(dataframe=dataframe, table_name=table)
-                        db_logger.info('Dataframe "{}" loaded to a table "{}"'.format(file_name, table))
-                    else:
-                        db.load_to_database(dataframe=dataframe, table_name=table)
-                        db_logger.info('Dataframe "{}" loaded to a table "{}"'.format(file_name, table))
-                    queue.task_done()
+                dataframe, file_name = queue.get()
+                        
+                table = db.determine_table_name(file_name)
+                
+                if table in db_tables:    
+                    db.load_to_database(dataframe=dataframe, table_name=table)
+                    db_logger.info('Dataframe "{}" loaded to a table "{}"'.format(file_name, table))   
+                else:
+                    db_logger.error('Table "{}" not found in the database'.format(table))
+                    
+                queue.task_done()
+                
         except Exception as e:
-            db_logger.error("An error occurred while loading the data: {}.".format(e))
+            db_logger.error("An error occurred while loading the data: {}.".format(e), exc_info=True)
+ 

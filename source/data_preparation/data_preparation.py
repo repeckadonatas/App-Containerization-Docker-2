@@ -52,7 +52,7 @@ def change_column_names(dataframe: pd.DataFrame) -> pd.DataFrame:
     return dataframe
 
 
-def prepare_json_data(queue, event):
+def prepare_json_data(queue, event) -> None:
     """
     Setting up the sequence in which
     to execute data preparation functions.
@@ -68,8 +68,9 @@ def prepare_json_data(queue, event):
                 json_to_df = create_dataframe(json_file)
                 new_col_names = change_column_names(json_to_df)
                 data_logger.info('A dataframe was created for a file: {}'.format(json_file))
+
                 queue.put([new_col_names, json_file])
-            print()
+
             event.set()
         except Exception as e:
             data_logger.error("An error occurred while creating a dataframe: {}\n".format(e))

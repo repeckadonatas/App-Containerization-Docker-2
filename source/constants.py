@@ -7,6 +7,16 @@ PATH_TO_DATA_STORAGE = Path(__file__).cwd() / 'source/data/'
 PATH_TO_API = Path(__file__).cwd() / 'source/api_key/api_key.txt'
 PATH_TO_METALS_LIST = Path(__file__).cwd() / 'source/metals.txt'
 
+TABLES_TO_CREATE = ['gold_historic',
+                    'silver_historic',
+                    'platinum_historic',
+                    'palladium_historic']
+
+TABLE_MAPPING = {'gold': 'gold_historic',
+                 'silver': 'silver_historic',
+                 'platinum': 'platinum_historic',
+                 'palladium': 'palladium_historic'}
+
 
 def env_config() -> os.environ:
     """
