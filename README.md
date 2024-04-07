@@ -122,7 +122,7 @@ When using the code manually locally, store the `.env` file in the root director
 
 ## Using ML model(FIX!!!!)
 
-To use the ML model for price movement prediction of target commodities, ...
+To use the ML model for price movement prediction of target commodities, ....
 
 
 ## Concurrency method used
