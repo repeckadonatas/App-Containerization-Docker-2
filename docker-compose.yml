@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  project-db:
+    image: postgres:15
+    restart: always
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: "trust"  # SHOULD NOT BE USED IN PROD ENVIRONMENT!!
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 1s
+      timeout: 20s
+      retries: 5
+    volumes:
+      - project-db-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  project-app:
+    image: notexists/kaggle-data-download-app:1.0  #change here!!!
+    depends_on:
+      project-db:
+        condition: service_healthy
+    environment:
+      PGUSER: ${PGUSER}
+      PGPASSWORD: ${PGPASSWORD}
+      PGHOST: host.docker.internal
+      PGPORT: ${PGPORT}
+      PGDATABASE: ${PGDATABASE}
+    volumes:
+      # FOR PROD EVIRONMENT SHOULD BE SETUP APPROPRIATELY!
+      # THIS IS FOR DEMONSTRATION PURPOSES!
+      - C:\Users\HP\Desktop\TURING\Projects\'Module 2'\DE-Capstone-2\logs:/app/logs/
+
+volumes:
+  project-db-data:
+    driver: local
+  # project-logs:
