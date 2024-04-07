@@ -1,6 +1,6 @@
 import pandas as pd
 from sqlalchemy.engine import URL
-from sqlalchemy import create_engine, Table, Column, String, Integer, Float, TIMESTAMP ,MetaData
+from sqlalchemy import create_engine, Table, Column, String, Float, TIMESTAMP, MetaData
 
 import source.logger as log
 from source.constants import *
@@ -58,12 +58,12 @@ class MetalsPriceDataDatabase:
             if self.conn is not None:
                 self.conn.close()
 
-                db_logger.info('Connection closed.')
+                db_logger.info('Connection closed.\n')
             elif exc_val:
                 raise
 
         except (Exception, AttributeError, exc_type, exc_val, exc_tb) as err:
-            db_logger.error("Connection was not closed: %s", err)
+            db_logger.error("Connection was not closed: %s\n", err)
 
     def create_tables(self) -> (str | None):
         """
@@ -74,7 +74,7 @@ class MetalsPriceDataDatabase:
             self.metadata = MetaData()
 
             for table in TABLES_TO_CREATE:
-                self.loan_test_table = Table(
+                self.price_table = Table(
                     f'{table}',
                     self.metadata,
                     Column('status', String(20)),
@@ -137,7 +137,7 @@ class MetalsPriceDataDatabase:
         return db_logger.error('Table "{}" not found in the database'.format(table))
 
 
-def metals_price_data_upload_to_db(queue, event) -> None:
+def metals_price_data_upload_to_db(queue: str, event: str) -> None:
     """
     Setting up the sequence in which
     to execute data upload to database.
@@ -150,7 +150,7 @@ def metals_price_data_upload_to_db(queue, event) -> None:
         try:
             db.create_tables()
             db_tables = db.get_tables_in_db()
-            
+            print()
             while not event.is_set() or not queue.empty():
                 dataframe, file_name = queue.get()
                         

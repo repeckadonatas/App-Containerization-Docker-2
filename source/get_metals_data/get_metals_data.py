@@ -21,7 +21,7 @@ def get_metal_price_data(metals: list,
         api_url = (f'https://api.metals.dev/v1/metal/spot'
                    f'?api_key={API_KEY}'
                    f'&metal={metal}'
-                    '&currency=EUR')
+                    '&currency=USD')
 
         headers = {'accept': 'application/json; charset=utf-8'}
         response = requests.get(api_url, headers=headers)

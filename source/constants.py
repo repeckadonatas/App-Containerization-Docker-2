@@ -29,12 +29,21 @@ def env_config() -> os.environ:
 
 
 def read_api() -> str:
+    """
+    Reads API key value from a specified .txt file.
+    :return: API key value as a string
+    """
     with open(PATH_TO_API, 'r', encoding='utf-8') as key:
         api_key = key.readline()
     return api_key
     
     
 def read_metals_list() -> list:
+    """
+    Reads a list of commodities (precious metals in this case)
+    to get the price information from an API.
+    :return: a list of precious metals
+    """
     metals = []
     with open(PATH_TO_METALS_LIST, 'r', encoding='utf-8') as file:
         for metal in file:
