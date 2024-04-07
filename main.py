@@ -23,7 +23,7 @@ event = threading.Event()
 queue = Queue(maxsize=4)
 try:
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
-        tasks = [executor.map(metals.download_metals_data), 
+        tasks = [executor.submit(metals.download_metals_data()), 
                  executor.submit(data.prepare_json_data(queue, event)), 
                  executor.submit(db.metals_price_data_upload_to_db(queue, event))]
 

@@ -1,6 +1,7 @@
 import pandas as pd
 from sqlalchemy.engine import URL
-from sqlalchemy import create_engine, Table, Column, String, Float, TIMESTAMP, MetaData
+from sqlalchemy import create_engine, Table, Column, String, Float, Integer, TIMESTAMP, MetaData, DateTime
+from sqlalchemy.exc import OperationalError
 
 import source.logger as log
 from source.constants import *
@@ -77,6 +78,7 @@ class MetalsPriceDataDatabase:
                 self.price_table = Table(
                     f'{table}',
                     self.metadata,
+                    Column('id', Integer, primary_key=True, autoincrement=True),
                     Column('status', String(20)),
                     Column('timestamp', TIMESTAMP()),
                     Column('currency', String(5)),
@@ -97,9 +99,9 @@ class MetalsPriceDataDatabase:
                 else:
                     metadata.create(self.engine, checkfirst=True)
                     db_logger.info('Table "{}" was created successfully.'.format(table))
-
+            
             self.conn.rollback()
-        except Exception as e:
+        except (Exception, OperationalError) as e:
             db_logger.error("An error occurred while creating a table: {}".format(e))
             self.conn.rollback()
 
@@ -108,7 +110,7 @@ class MetalsPriceDataDatabase:
         Returns a list of all the tables in the database.
         """
         table_list = []
-        for table, metadata in self.metadata.tables.items():
+        for table, self.metadata in self.metadata.tables.items():
             if self.engine.dialect.has_table(self.conn, table):
                 table_list.append(table)
         db_logger.info('Table(s) found in a database: {}'.format(table_list))
@@ -122,7 +124,7 @@ class MetalsPriceDataDatabase:
         :param table_name: table to load the data to.
         """
         try:
-            dataframe.to_sql(table_name, con=self.engine, if_exists='append', index=False)
+            dataframe.to_sql(table_name, con=self.engine, if_exists='append', index=None, dtype={'timestamp': TIMESTAMP()})
         except Exception as e:
             db_logger.error("An error occurred while loading the data: {}. Rolling back the last transaction".format(e))
             self.conn.rollback()
