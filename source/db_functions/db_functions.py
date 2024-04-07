@@ -1,6 +1,6 @@
 import pandas as pd
 from sqlalchemy.engine import URL
-from sqlalchemy import create_engine, Table, Column, String, Float, Integer, TIMESTAMP, MetaData, DateTime
+from sqlalchemy import create_engine, Table, Column, String, Float, Integer, TIMESTAMP, MetaData
 from sqlalchemy.exc import OperationalError
 
 import source.logger as log
