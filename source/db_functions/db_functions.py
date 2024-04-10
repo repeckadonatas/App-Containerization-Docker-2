@@ -155,12 +155,15 @@ def metals_price_data_upload_to_db(queue: str, event: str) -> None:
             print()
             while not event.is_set() or not queue.empty():
                 dataframe, file_name = queue.get()
+                
+                db.load_to_database(dataframe=dataframe, table_name='commodities_price_data_analytics')
+                db_logger.info('Dataframe "{}" loaded to a table "commodities_price_data_analytics"'.format(file_name))
                         
                 table = db.determine_table_name(file_name)
                 
                 if table in db_tables:    
                     db.load_to_database(dataframe=dataframe, table_name=table)
-                    db_logger.info('Dataframe "{}" loaded to a table "{}"'.format(file_name, table))   
+                    db_logger.info('Dataframe "{}" loaded to a table "{}"'.format(file_name, table))
                 else:
                     db_logger.error('Table "{}" not found in the database'.format(table))
                     

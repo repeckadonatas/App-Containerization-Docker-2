@@ -10,7 +10,8 @@ PATH_TO_METALS_LIST = Path(__file__).cwd() / 'source/metals.txt'
 TABLES_TO_CREATE = ['gold_historic',
                     'silver_historic',
                     'platinum_historic',
-                    'palladium_historic']
+                    'palladium_historic',
+                    'commodities_price_data_analytics']
 
 TABLE_MAPPING = {'gold': 'gold_historic',
                  'silver': 'silver_historic',
