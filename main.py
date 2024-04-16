@@ -2,7 +2,7 @@ import source.logger as log
 import source.get_metals_data as metals
 import source.data_preparation as data
 import source.db_functions as db
-import ml_model.ml_model as mlm
+import source.ml_model as mlm
 
 import concurrent.futures
 import threading
