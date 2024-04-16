@@ -40,9 +40,16 @@ The program uses Threading as a concurrency method. Threading is suitable when l
     * `palladium_historic`
   * For analytical purposes, the data of these tables is contained in a single table `commodities_price_data_analytics`.
 
-  **Utilizing supplied machine learing model**
-  * For ML training purposes for price movement prediction of target commodities, data is taken from `_historic` tables. The model creates multiple outputs based on `rate_price` and `rate_ask` column values from historic tables and stores the outputs in consequent `model_rate_ask` and `model_rate_price` folders.
-  * The ML model runs right after the API data download and upload to a database.
+*  **Utilizing supplied machine learing model**
+   * For ML training purposes for price movement prediction of target commodities, data is taken from `_historic` tables. The model creates multiple outputs based on `rate_price` and `rate_ask` column values from historic tables and stores the outputs in consequent `model_rate_ask` and `model_rate_price` folders.
+   * The ML model runs right after the API data download and upload to a database.
+
+* **Backups**(FIX!!!!)
+  * Backups are created for a database and ML models periodically.
+
+* **Containerization**(FIX!!!!)
+  * The project is containerized using Docker. The Image of the app is stored in Docker Hub and is retrieved when a `docker-compose.yml` file is run on a set schedule.
+  * The scheduling for running the YML file done by using ...
 
 
 ## How To Use The Program(FIX!!!!)
@@ -108,7 +115,7 @@ To connect to the database, the `source/db_functions/db_functions.py` file needs
 | PGDATABASE =  database_name |
 
 \
-1.1. **For PostgreSQL Docker image:**
+1.1. **For PostgreSQL Docker image:**(FIX!!!!)
 
 When using Docker, **PostgreSQL** needs **POSTGRES_USER** and **POSTGRES_PASSWORD** environment variables to be passed. For this reason the YML file can be set up to read these environment variables from `.env` file.
 
