@@ -19,6 +19,10 @@ TABLE_MAPPING = {'gold': 'gold_historic',
                  'palladium': 'palladium_historic'}
 
 
+COMMODITIES = ["gold", "silver", "platinum", "palladium"]
+
+TRAINING_DATA_COLUMNS = ['rate_price', 'rate_ask']
+
 def env_config() -> os.environ:
     """
     Gets database connection credentials from .env file.
@@ -51,4 +55,3 @@ def read_metals_list() -> list:
             metal = metal.strip().rstrip(',')
             metals.append(metal)
     return metals
-
