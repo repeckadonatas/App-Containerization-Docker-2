@@ -13,5 +13,6 @@ source/data/*
 source/api_key/*
 source/__pycache__
 source/get_metals_data/__pycache__
+source/ml_model/__pycache__
 ml_model/ml_model/__pycache__
 model_rate_*
