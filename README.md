@@ -32,14 +32,17 @@ The program uses Threading as a concurrency method. Threading is suitable when l
 * **Data upload to a database**:
   * Once the data is prepared for uploading, datasets are first placed in a queue and after matching the datasets with the tables in a database, the data is then uploaded to corresponding tables.
 
-* **Tables**(FIX!!!!):
-  * The database contains multiple tables for data storage. For storing historical real world data, there are separate tables for every metal:
+* **Tables**:
+  * The database contains multiple tables for data storage. For storing historic real world data, there are separate tables for every metal:
     * `gold_historic`
     * `silver_historic`
     * `platinum_historic`
     * `palladium_historic`
-  * For analytical purposes, the data of these tables is contained in a single table `commodities_price_data`.
-  * For ML training purposes, ...
+  * For analytical purposes, the data of these tables is contained in a single table `commodities_price_data_analytics`.
+
+  **Utilizing supplied machine learing model**
+  * For ML training purposes for price movement prediction of target commodities, data is taken from `_historic` tables. The model creates multiple outputs based on `rate_price` and `rate_ask` column values from historic tables and stores the outputs in consequent `model_rate_ask` and `model_rate_price` folders.
+  * The ML model runs right after the API data download and upload to a database.
 
 
 ## How To Use The Program(FIX!!!!)
@@ -119,10 +122,6 @@ When connecting to a database from **outside** the Docker container, for connect
 **Note:**
 
 When using the code manually locally, store the `.env` file in the root directory of the project folder to connect to the database and use it with no issues.
-
-## Using ML model(FIX!!!!)
-
-To use the ML model for price movement prediction of target commodities, ....
 
 
 ## Concurrency method used
