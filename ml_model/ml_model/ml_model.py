@@ -3,6 +3,12 @@ import pandas as pd
 from pathlib import Path
 from sktime.forecasting.arima import ARIMA
 
+import source.db_functions as db_con
+import source.logger as log
+from source.constants import *
+
+ml_logger = log.app_logger(__name__)
+
 rng = np.random.default_rng()
 
 AR_LOWER = 0.1
@@ -47,7 +53,7 @@ def generate_sample_data(
         full_dataset.tail(y_size),
         (ar_coefficients, means),
     )
-
+    
 
 class Model:
     def __init__(self, tickers: list[str], x_size: int, y_size: int) -> None:
@@ -56,22 +62,44 @@ class Model:
         self.y_size = y_size
         self.models: dict[str, ARIMA] = {}
 
-    def train(self, /, use_generated_data: bool = False) -> None:
-        if use_generated_data:
-            data, _, _ = generate_sample_data(
-                self.tickers, self.x_size, self.y_size
-            )
-        else:
-            raise NotImplementedError
-        for ticker in self.tickers:
-            dataset = data[ticker].values
-            model = ARIMA(order=(1, 1, 0), with_intercept=True, suppress_warnings=True)
-            model.fit(dataset)
-            self.models[ticker] = model
-
+    def train(self, col: str) -> None:
+        try:
+            with db_con.MetalsPriceDataDatabase() as db:
+                conn = db.conn
+                for ticker in self.tickers:
+                    query = f"SELECT timestamp, rate_price, rate_ask \
+                            FROM {ticker}_historic \
+                            ORDER BY timestamp DESC LIMIT {self.x_size}"
+                    data = pd.read_sql(query, conn)
+                    
+                    dataset = data[col].values
+                    model = ARIMA(order=(1, 1, 0), with_intercept=True, suppress_warnings=True)
+                    model.fit(dataset)
+                    self.models[ticker] = model
+                    
+                    ml_logger.info('Creating "{}" price prediction data for "{}"'.format(col, ticker))
+        except Exception as e:
+            ml_logger.error('An error occured while training the model: {}'.format(e))
+            
+            
     def save(self, path_to_dir: str | Path) -> None:
         path_to_dir = Path(path_to_dir)
         path_to_dir.mkdir(parents=True, exist_ok=True)
         for ticker in self.tickers:
             full_path = path_to_dir / ticker
             self.models[ticker].save(full_path)
+
+
+def train_price_prediction_models():
+    """
+    A function to set up multiple training models
+    based on multiple data points to use for training.
+    """
+    try:
+        model = Model(COMMODITIES, 12, 1)
+        for col in TRAINING_DATA_COLUMNS:
+            model.train(col)
+            model.save(f"model_{col}")
+            
+    except Exception as e:
+        ml_logger.error('An error occured while training the model: {}'.format(e))
