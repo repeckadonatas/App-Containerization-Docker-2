@@ -43,7 +43,7 @@ class MetalsPriceDataDatabase:
             self.engine = create_engine(self.db_url, pool_pre_ping=True)
             self.conn = self.engine.connect().execution_options(autocommit=True)
 
-            db_logger.info("Connected to the database")
+            db_logger.info("Connected to the database.")
         except (Exception, AttributeError) as err:
             db_logger.error("The following connection error has occurred: %s", err)
         return self
@@ -116,6 +116,15 @@ class MetalsPriceDataDatabase:
         db_logger.info('Table(s) found in a database: {}'.format(table_list))
 
         return table_list
+    
+    def determine_table_name(self, file_name: str) -> (str | None):
+        """
+        To determine the table name based on the file name.
+        """
+        for prefix, table in TABLE_MAPPING.items():
+            if prefix in file_name:
+                return table
+        return db_logger.error('Table "{}" not found in the database'.format(table))
 
     def load_to_database(self, dataframe: pd.DataFrame, table_name: str) -> None:
         """
@@ -129,14 +138,7 @@ class MetalsPriceDataDatabase:
             db_logger.error("An error occurred while loading the data: {}. Rolling back the last transaction".format(e))
             self.conn.rollback()
             
-    def determine_table_name(self, file_name: str) -> (str | None):
-        """
-        To determine the table name based on the file name.
-        """
-        for prefix, table in TABLE_MAPPING.items():
-            if prefix in file_name:
-                return table
-        return db_logger.error('Table "{}" not found in the database'.format(table))
+    
 
 
 def metals_price_data_upload_to_db(queue: str, event: str) -> None:
