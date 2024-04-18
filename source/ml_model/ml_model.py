@@ -83,7 +83,7 @@ class Model:
             
             
     def save(self, path_to_dir: str | Path) -> None:
-        path_to_dir = Path(path_to_dir)
+        path_to_dir = Path('trained_models', path_to_dir)
         path_to_dir.mkdir(parents=True, exist_ok=True)
         for ticker in self.tickers:
             full_path = path_to_dir / ticker
