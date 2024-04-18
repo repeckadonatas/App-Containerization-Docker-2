@@ -1,11 +1,28 @@
 import os
+from datetime import datetime
 from dotenv import load_dotenv, find_dotenv
 from pathlib import Path
 
 
+CURRENT_DATE = datetime.today().strftime("%Y%m%d")
+PG_DUMP_PATH = r'C:\Program Files\PostgreSQL\16\bin\pg_dump.exe'
+
+# PATHS TO DATA AND FILES
 PATH_TO_DATA_STORAGE = Path(__file__).cwd() / 'source/data/'
 PATH_TO_API = Path(__file__).cwd() / 'source/api_key/api_key.txt'
 PATH_TO_METALS_LIST = Path(__file__).cwd() / 'source/metals.txt'
+ML_MODELS_PATH = Path(__file__).cwd() / 'trained_models'
+
+# BACKUPS LOCATION
+PATH_TO_BACKUPS = Path(__file__).cwd() / 'backups'
+BACKUP_FOLDERS_TODAY = PATH_TO_BACKUPS / ("backup_" + CURRENT_DATE)
+
+# BACKUP FOLDERS FOR DATABASE AND ML MODELS
+DB_BACKUP_FILE = BACKUP_FOLDERS_TODAY / ("db_backup_" + CURRENT_DATE + ".sql")
+ML_MODELS_BACKUP_FOLDER = BACKUP_FOLDERS_TODAY / ('ml_models_backup_' + CURRENT_DATE)
+
+# ORGANIZING COMMODITIES AND DATA UPLOAD TO A DB
+COMMODITIES = ["gold", "silver", "platinum", "palladium"]
 
 TABLES_TO_CREATE = ['gold_historic',
                     'silver_historic',
@@ -18,11 +35,9 @@ TABLE_MAPPING = {'gold': 'gold_historic',
                  'platinum': 'platinum_historic',
                  'palladium': 'palladium_historic'}
 
-
-COMMODITIES = ["gold", "silver", "platinum", "palladium"]
-
 TRAINING_DATA_COLUMNS = ['rate_price', 'rate_ask']
 
+# REUSABLE REPEATABLE FUNCTIONS
 def env_config() -> os.environ:
     """
     Gets database connection credentials from .env file.
