@@ -14,5 +14,9 @@ source/api_key/*
 source/__pycache__
 source/get_metals_data/__pycache__
 source/ml_model/__pycache__
+source/backup_functions/__pycache__
 ml_model/ml_model/__pycache__
 model_rate_*
+trained_models/*
+backups/*
+ml_main.py
