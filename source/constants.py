@@ -5,7 +5,8 @@ from pathlib import Path
 
 
 CURRENT_DATE = datetime.today().strftime("%Y%m%d")
-PG_DUMP_PATH = r'C:\Program Files\PostgreSQL\16\bin\pg_dump.exe'
+# PG_DUMP_PATH = r'C:\Program Files\PostgreSQL\16\bin\pg_dump.exe'
+PG_DUMP_PATH = 'pg_dump'
 
 # PATHS TO DATA AND FILES
 PATH_TO_DATA_STORAGE = Path(__file__).cwd() / 'source/data/'

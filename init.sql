@@ -1,10 +1,10 @@
--- CREATE ROLE root;
--- ALTER ROLE root WITH LOGIN;
--- CREATE DATABASE "root";
--- CREATE DATABASE "kaggle-data-db";
+CREATE ROLE root;
+ALTER ROLE root WITH LOGIN;
+CREATE DATABASE "root";
+CREATE DATABASE "metals-price-data-db";
 
--- CREATE EXTENSION IF NOT EXISTS dblink;
---
+CREATE EXTENSION IF NOT EXISTS dblink;
+
 DO
 $do$
 BEGIN
