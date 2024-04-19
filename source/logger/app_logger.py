@@ -5,7 +5,7 @@ from logging.handlers import RotatingFileHandler
 from datetime import datetime
 
 
-FORMATTER = logging.Formatter('%(asctime)s :: %(name)s :: %(levelname)s :: %(funcName)s :: %(message)s')
+FORMATTER = logging.Formatter('%(asctime)s :: %(name)s :: %(levelname)s :: %(funcName)s :: %(message)s', datefmt='%Y-%m-%d %H:%M:%S UTC')
 PATH_TO_LOGS = Path(__file__).cwd()
 LOG_FILE = PATH_TO_LOGS / 'logs/' / ("app_logger_" + datetime.today().strftime("%Y%m%d") + ".log")
 

@@ -33,8 +33,8 @@ services:
     volumes:
       # FOR PROD EVIRONMENT SHOULD BE SETUP APPROPRIATELY!
       # THIS IS FOR DEMONSTRATION PURPOSES!
-      # - /mnt/c/Users/HP/Desktop/TURING/Projects/Module 2/DE-Capstone-2/logs:/app/logs/
-      - C:\Users\HP\Desktop\TURING\Projects\'Module 2'\DE-Capstone-2\logs:/app/logs/
+      - /mnt/c/Users/HP/Desktop/TURING/Projects/Module 2/DE-Capstone-2/logs:/app/logs/
+      # - C:\Users\HP\Desktop\TURING\Projects\'Module 2'\DE-Capstone-2\logs:/app/logs/
 
   backup-app:
     image: notexists/commodities-backup-app:1.0
@@ -52,11 +52,11 @@ services:
     volumes:
       # FOR PROD EVIRONMENT SHOULD BE SETUP APPROPRIATELY!
       # THIS IS FOR DEMONSTRATION PURPOSES!
-      # - /mnt/c/Users/HP/Desktop/TURING/Projects/Module 2/DE-Capstone-2/logs:/app/logs/
-      - C:\Users\HP\Desktop\TURING\Projects\'Module 2'\DE-Capstone-2\logs:/app/logs/
+      - /mnt/c/Users/HP/Desktop/TURING/Projects/Module 2/DE-Capstone-2/logs:/app/logs/
+      # - C:\Users\HP\Desktop\TURING\Projects\'Module 2'\DE-Capstone-2\logs:/app/logs/
 
-      # - /mnt/c/Users/HP/Desktop/TURING/Projects/Module 2/DE-Capstone-2/backups:/app/backups/
-      - C:\Users\HP\Desktop\TURING\Projects\'Module 2'\DE-Capstone-2\backups:/app/backups/
+      - /mnt/c/Users/HP/Desktop/TURING/Projects/Module 2/DE-Capstone-2/backups:/app/backups/
+      # - C:\Users\HP\Desktop\TURING\Projects\'Module 2'\DE-Capstone-2\backups:/app/backups/
 
 volumes:
   project-db-data:
