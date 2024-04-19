@@ -20,7 +20,7 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
   project-app:
-    image: notexists/kaggle-data-download-app:1.0  #change here!!!
+    image: notexists/commodities-price-prediction-app:1.0
     depends_on:
       project-db:
         condition: service_healthy
@@ -33,9 +33,31 @@ services:
     volumes:
       # FOR PROD EVIRONMENT SHOULD BE SETUP APPROPRIATELY!
       # THIS IS FOR DEMONSTRATION PURPOSES!
+      # - /mnt/c/Users/HP/Desktop/TURING/Projects/Module 2/DE-Capstone-2/logs:/app/logs/
       - C:\Users\HP\Desktop\TURING\Projects\'Module 2'\DE-Capstone-2\logs:/app/logs/
+
+  backup-app:
+    image: notexists/commodities-backup-app:1.0
+    depends_on:
+      project-db:
+        condition: service_healthy
+      project-app:
+        condition: service_completed_successfully
+    environment:
+      PGUSER: ${PGUSER}
+      PGPASSWORD: ${PGPASSWORD}
+      PGHOST: host.docker.internal
+      PGPORT: ${PGPORT}
+      PGDATABASE: ${PGDATABASE}
+    volumes:
+      # FOR PROD EVIRONMENT SHOULD BE SETUP APPROPRIATELY!
+      # THIS IS FOR DEMONSTRATION PURPOSES!
+      # - /mnt/c/Users/HP/Desktop/TURING/Projects/Module 2/DE-Capstone-2/logs:/app/logs/
+      - C:\Users\HP\Desktop\TURING\Projects\'Module 2'\DE-Capstone-2\logs:/app/logs/
+
+      # - /mnt/c/Users/HP/Desktop/TURING/Projects/Module 2/DE-Capstone-2/backups:/app/backups/
+      - C:\Users\HP\Desktop\TURING\Projects\'Module 2'\DE-Capstone-2\backups:/app/backups/
 
 volumes:
   project-db-data:
     driver: local
-  # project-logs:
