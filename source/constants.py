@@ -12,7 +12,7 @@ PG_DUMP_PATH = 'pg_dump'
 PATH_TO_DATA_STORAGE = Path(__file__).cwd() / 'source/data/'
 PATH_TO_API = Path(__file__).cwd() / 'source/api_key/api_key.txt'
 PATH_TO_METALS_LIST = Path(__file__).cwd() / 'source/metals.txt'
-ML_MODELS_PATH = Path(__file__).cwd() / 'trained_models/'
+ML_MODELS_PATH = Path(__file__).cwd() / 'trained_models'
 
 # BACKUPS LOCATION
 PATH_TO_BACKUPS = Path(__file__).cwd() / 'backups'
