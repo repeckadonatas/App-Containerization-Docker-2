@@ -3,9 +3,12 @@ import logging
 from pathlib import Path
 from logging.handlers import RotatingFileHandler
 from datetime import datetime
+import pytz
 
 
-FORMATTER = logging.Formatter('%(asctime)s :: %(name)s :: %(levelname)s :: %(funcName)s :: %(message)s', datefmt='%Y-%m-%d %H:%M:%S %Z')
+LOG_TIME = datetime.now(tz=pytz.timezone('Europe/Vilnius')).strftime("%Y-%m-%d %H:%M:%S")
+
+FORMATTER = logging.Formatter(f'{LOG_TIME} :: %(name)s :: %(levelname)s :: %(funcName)s :: %(message)s')
 PATH_TO_LOGS = Path(__file__).cwd()
 LOG_FILE = PATH_TO_LOGS / 'logs/' / ("app_logger_" + datetime.today().strftime("%Y%m%d") + ".log")
 
