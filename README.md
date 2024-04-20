@@ -4,7 +4,7 @@
 
 ## About
 
-This project is an exercise in translating business requirements into data engineering tasks. The project has to envelop the use of Python, SQL and Docker and the resulting data from the database must be utilised in training the ML model for predicting the priece of commodities (precious metals in this sample case).
+This project is an exercise in translating business requirements into data engineering tasks. The project has to envelop the use of Python, SQL and Docker and the resulting data from the database must be utilised in training the ML model for predicting the priece of commodities (precious metals in this sample case). The database and ML models must be backed up periodically.
 
 For real world price data a **[Metals.Dev](https://metals.dev/)** API is used. After the data is downloaded, it is then transformed and prepared to be uploaded to the database. 
 
@@ -21,7 +21,7 @@ The program uses Threading as a concurrency method. Threading is suitable when l
 * Containerization and Image storage - **Docker**, **DockerHub**.
 
 
-## Project Deliveries Plan(FIX!!!!)
+## Project Deliveries Plan
 
 * **Database**:
   * For a database I chose PostgreSQL as it offers more features than some other databases (i.e. MySQL), it is free, easy-to-implement database management system and is better suited for enterprise-level applications. As this project assumes I am a part of a hedge fund specializing in developing bespoke trading strategies by using the latest technologies, a database suited for enterprise is a logical choice.
@@ -44,23 +44,24 @@ The program uses Threading as a concurrency method. Threading is suitable when l
    * For ML training purposes for price movement prediction of target commodities, data is taken from `_historic` tables. The model creates multiple outputs based on `rate_price` and `rate_ask` column values from historic tables and stores the outputs in consequent `model_rate_ask` and `model_rate_price` folders.
    * The ML model runs right after the API data download and upload to a database.
 
-* **Backups**(FIX!!!!)
-  * Backups are created for a database and ML models periodically.
+* **Backups**
+  * Backups are created for a database and ML models periodically every six (6) hours.
 
-* **Containerization**(FIX!!!!)
-  * The project is containerized using Docker. The Image of the app is stored in Docker Hub and is retrieved when a `docker-compose.yml` file is run on a set schedule.
-  * The scheduling for running the YML file done by using ...
+* **Containerization**
+  * The project is containerized using Docker. The project utilizes multiple Images built from the same base app. The Images are stored in **[this location](https://hub.docker.com/repositories/notexists)** on Docker Hub and are retrieved when a `docker-compose.yml` file is run on a set schedule.
+  * The scheduling for running the YML file done by using cron job. Cron accesses `run_main_services.sh` and `run_backup_service.sh` shell scripts to meet project requirements.
 
 
-## How To Use The Program(FIX!!!!)
+## How To Use The Program
 
 ### 1. Using Docker
 
 To run the program in a Docker container:
 - Download the `docker-compose.yml` file of this project.
 - In the terminal window run `docker compose -f docker-compose.yml up` command.
-- For **presentation purposes**, environment variables can be baked into the environment of app's Docker Image.
-- The Image of the application is pulled from a public repository on Docker Hub.
+- Make sure that folders `logs`, `backups` and `trained_models` are also created in the same location.
+- For **presentation purposes**, environment variables can be baked into the environment of app's Docker Image. A better way is to use `docker secrets` which this project does.
+- The Images of the applications are pulled from a public repository on Docker Hub.
 
 \
 For a **Production application:**
@@ -76,10 +77,14 @@ The Docker compose YML file should be on a target machine first.
 
 Every time the program runs, a log file is created in `logs` folder for that day. Information about any subsequent run is appended to the log file of that day. The program logs every data download, data transformation and data upload to the database. Errors are also logged into the same log file for the current day of the run.
 
+Additionally, when a backup service is run, backups for a database and ML models are created in `backups` folder.
 
-When running `docker-compose.yml` on a target machine, in order to store logs, the `volumes` section for the `project-app` should be adjusted accordingly. For **presentation purposes** logs are directed to be stored in the projects folder.
+
+When running `docker-compose.yml` on a target machine, in order to store logs, backups and trained models, the `volumes` section for the `project-app` should be adjusted accordingly. For **presentation purposes** logs, backups and trained models are directed to be stored in the project folder.
 
 - To restart the program, run `docker compose -f docker-compose.yml down` and then `docker compose -f docker-compose.yml up`.
+
+- Cron job should be created to automate the running of services for this project.
 
 
 ### 2. Running manually locally
@@ -93,12 +98,17 @@ Once dependency installation is completed, the program can now be used.
 
 To use the program, run the _`main.py`_ file. Once started, the API data download will begin, followed by data preparation and then data upload to respective tables on a database.
 
+To use a backup functionality, run the _`backups_main.py`_ file.
+
 \
 **Note:**
 
 Every time the program runs, a log file is created in `logs` folder for that day. Information about any subsequent run is appended to the log file of that day. The program logs every data download, data transformation and data upload to the database. Errors are also logged into the same log file for the current day of the run.
 
+Additionally, when a backup service is run, backups for a database and ML models are created in `backups` folder.
+
 - To restart the program, run _`main.py`_ again if the app is being run locally.
+- To restart a backup functionality, run the _`backups_main.py`_ file again.
 
 ### **Important:**
 
@@ -115,11 +125,11 @@ To connect to the database, the `source/db_functions/db_functions.py` file needs
 | PGDATABASE =  database_name |
 
 \
-1.1. **For PostgreSQL Docker image:**(FIX!!!!)
+1.1. **For PostgreSQL Docker image:**
 
 When using Docker, **PostgreSQL** needs **POSTGRES_USER** and **POSTGRES_PASSWORD** environment variables to be passed. For this reason the YML file can be set up to read these environment variables from `.env` file.
 
-For **presentation purposes**, environment variables can be passed securely to Dockerfile first using `RUN --mount=type=secret`.
+For **presentation purposes**, environment variables are passed securely to Dockerfile first using `RUN --mount=type=secret`.
 
 1.2 **To Connect to a PostgreSQL database from OUTSIDE the Docker container:**
 
