@@ -36,10 +36,10 @@ def backup_ml_models() -> None:
     """
     try:
         os.makedirs(PATH_TO_BACKUPS, exist_ok=True)
-        ml_models = ML_MODELS_PATH
-        backup_destination = ML_MODELS_BACKUP_FOLDER
+        ml_models = (ML_MODELS_PATH)
+        backup_destination = (ML_MODELS_BACKUP_FOLDER)
         
-        shutil.copytree(ml_models, backup_destination)
+        shutil.copytree(src=ml_models, dst=backup_destination, dirs_exist_ok=True)
         
         backup_logger.info('ML models backup completed.')
     except (Exception, shutil.Error) as e:

@@ -4,4 +4,4 @@ cd /mnt/c/Users/HP/Desktop/TURING/Projects/'Module 2'/DE-Capstone-2
 
 echo "Running cron-job of all services"
 
-docker compose restart
+docker compose restart project-db project-app backup-app
