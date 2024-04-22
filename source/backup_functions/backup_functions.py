@@ -1,3 +1,9 @@
+"""
+Functions used to control the pipeline 
+of creating backups of a database and
+ML models and where the backups are saved.
+"""
+
 import os
 import shutil
 import subprocess

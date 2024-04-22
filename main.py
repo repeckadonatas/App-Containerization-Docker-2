@@ -1,22 +1,23 @@
-import source.logger as log
-import source.get_metals_data as metals
-import source.data_preparation as data
-import source.db_functions as db
-import source.ml_model as mlm
-
-import concurrent.futures
-import threading
-import time
-from queue import Queue
-
-main_logger = log.app_logger(__name__)
-
 """
 Main file to run the program using 
 Python's concurrent.futures module.
 The programs performance is also timed
 and printed out.
 """
+
+import time
+import threading
+import concurrent.futures
+from queue import Queue
+
+import source.logger as log
+import source.get_metals_data as metals
+import source.data_preparation as data
+import source.db_functions as db
+import source.ml_model as mlm
+
+main_logger = log.app_logger(__name__)
+
 
 start = time.perf_counter()
 

@@ -1,8 +1,9 @@
-import source.backup_functions as bckp
-
 """
 The main .py file to run backup functions from.
 """
+
+import source.backup_functions as bckp
+
 
 try:
     bckp.database_backup()

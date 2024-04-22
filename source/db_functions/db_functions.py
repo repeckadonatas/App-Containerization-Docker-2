@@ -1,3 +1,9 @@
+"""
+Database connection functions.
+Used to create a connection with a database
+and load data to it.
+"""
+
 import pandas as pd
 from sqlalchemy.engine import URL
 from sqlalchemy import create_engine, Table, Column, String, Float, Integer, TIMESTAMP, MetaData
@@ -7,12 +13,6 @@ import source.logger as log
 from source.constants import *
 
 db_logger = log.app_logger(__name__)
-
-"""
-Database connection functions.
-Used to create a connection with a database
-and load data to it.
-"""
 
 
 class MetalsPriceDataDatabase:
@@ -66,7 +66,7 @@ class MetalsPriceDataDatabase:
         except (Exception, AttributeError, exc_type, exc_val, exc_tb) as err:
             db_logger.error("Connection was not closed: %s\n", err)
 
-    def create_tables(self) -> (str | None):
+    def create_tables(self) -> (Table | None):
         """
         Creates tables in a database if they do not exist.
         Returns a list of tables in a database.
@@ -105,7 +105,7 @@ class MetalsPriceDataDatabase:
             db_logger.error("An error occurred while creating a table: {}".format(e))
             self.conn.rollback()
 
-    def get_tables_in_db(self) -> None:
+    def get_tables_in_db(self) -> list:
         """
         Returns a list of all the tables in the database.
         """

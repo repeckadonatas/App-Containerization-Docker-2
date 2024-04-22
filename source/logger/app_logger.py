@@ -1,15 +1,14 @@
+"""
+A customized logger that is used throughout the project
+to log the responses of the app. A file is created daily
+to store all log messages for that day.
+"""
+
 import sys
 import logging
-from pathlib import Path
 from logging.handlers import RotatingFileHandler
-from datetime import datetime
 
-
-LOG_TIME = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-FORMATTER = logging.Formatter(f'{LOG_TIME} :: %(name)s :: %(levelname)s :: %(funcName)s :: %(message)s')
-PATH_TO_LOGS = Path(__file__).cwd()
-LOG_FILE = PATH_TO_LOGS / 'logs/' / ("app_logger_" + datetime.today().strftime("%Y%m%d") + ".log")
+from source.constants import *
 
 
 def get_console_handler():

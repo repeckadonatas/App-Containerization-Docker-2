@@ -1,3 +1,9 @@
+"""
+Functions used to prepare JSON files from
+an API responses before uploading the data
+to the database.
+"""
+
 import os
 import json
 import pandas as pd

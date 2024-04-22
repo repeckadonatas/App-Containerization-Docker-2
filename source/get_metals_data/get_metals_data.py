@@ -1,4 +1,13 @@
+"""
+Functions to get API response and save it as 
+JSON file.
+download_metals_data() function is controling the
+logic for data download and is used in
+concurrency.
+"""
+
 import json
+
 import requests
 from requests.exceptions import RequestException
 

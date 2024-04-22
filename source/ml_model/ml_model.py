@@ -1,3 +1,8 @@
+"""
+ML model functions used to test out the basic model
+functionality before larger future integration.
+"""
+
 import numpy as np
 import pandas as pd
 from pathlib import Path
