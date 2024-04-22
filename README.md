@@ -86,6 +86,14 @@ When running `docker-compose.yml` on a target machine, in order to store logs, b
 
 - Cron job should be created to automate the running of services for this project.
 
+### 1.1 Cron job set up
+
+- To schedule the periodic hourly data downloads and uploads to a database set up the cron job as follows: \
+`0 * * * * /usr/bin/bash /path/to/scripts/run_main_services.sh`
+
+- To schedule backups of a database and ML models every six (6) hours: \
+`0 */6 * * * /usr/bin/bash /path/to/scripts/run_backup_service.sh`
+
 
 ### 2. Running manually locally
 
