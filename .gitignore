@@ -21,3 +21,4 @@ trained_models/*
 backups/*
 ml_main.py
 misc.txt
+exercise.py

@@ -17,7 +17,7 @@ services:
       retries: 5
     volumes:
       - project-db-data:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   project-app:
     image: notexists/commodities-price-prediction-app:1.0
